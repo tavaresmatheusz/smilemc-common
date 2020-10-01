@@ -1,0 +1,4 @@
+name: Common
+main: br.com.hypemc.commons.bukkit.BukkitCommons
+version: 0.0.1-SNAPSHOT
+author: Shock
