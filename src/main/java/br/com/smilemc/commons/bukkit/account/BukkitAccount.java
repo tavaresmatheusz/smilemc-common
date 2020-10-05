@@ -76,8 +76,11 @@ public class BukkitAccount extends Account {
 	public void permissionSetup(Player player) {
 
 		permissionAttachment = player.addAttachment(BukkitCommons.getInstance());
-
-		for (String permission : getPermissionSetter().getPerms())
+		
+		if (getGroup().getPermission().getPerms() == null)
+			return;
+		
+		for (String permission : getGroup().getPermission().getPerms())
 			permissionAttachment.setPermission(permission, true);
 
 		for (String permission : getPermissionList().split(";"))

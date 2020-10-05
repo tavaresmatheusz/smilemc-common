@@ -24,7 +24,8 @@ public class BungeeCommand implements CommandClass {
 		sender.sendMessage("§aLista de servidores:");
 		sender.sendMessage("");
 		for (Server server : BungeeCommons.getInstance().getServerManager().getServers()) {
-			sender.sendMessage("§2§l* §f" + server.getName() + " - " + server.getOnline() + "/" + server.getMaxPlayers());
+			sender.sendMessage(
+					"§2§l* §f" + server.getName() + " - " + server.getOnline() + "/" + server.getMaxPlayers());
 			if (beastServer == null)
 				beastServer = server;
 			if (server.getOnline() > beastServer.getOnline())
@@ -97,7 +98,8 @@ public class BungeeCommand implements CommandClass {
 				return;
 			}
 
-			proxiedTarget.sendMessage(TextComponent.fromLegacyText("§aVocê está sendo §2conectado§a ao servidor §e" + server.getName() + "§f!"));
+			proxiedTarget.sendMessage(TextComponent
+					.fromLegacyText("§aVocê está sendo §2conectado§a ao servidor §e" + server.getName() + "§f!"));
 			proxiedTarget.connect(BungeeCord.getInstance().getServerInfo(server.getName()));
 			sender.sendMessage("§aVocê enviou o jogador §2" + proxiedTarget.getName() + "§a ao servidor §2"
 					+ server.getName() + "§a!");
@@ -138,16 +140,42 @@ public class BungeeCommand implements CommandClass {
 
 	}
 
-	@Command(name = "connect", aliases = { "server", "go" })
-	public void connect(BungeeCommandArgs bungeeCommandArgs) {
+	@Command(name = "lobby")
+	public void lobby(BungeeCommandArgs bungeeCommandArgs) {
 		CommandSender sender = bungeeCommandArgs.getSender();
 		String[] args = bungeeCommandArgs.getArgs();
-		
+
 		if (!bungeeCommandArgs.isPlayer()) {
 			sender.sendMessage("Comando disponível apenas in-game!");
 			return;
 		}
-		
+
+		if (args.length == 0) {
+			bungeeCommandArgs.getPlayer().connect(BungeeCord.getInstance().getServerInfo("lobby"));
+			sender.sendMessage("§eTe conectando ao Lobby.");
+			return;
+		}
+
+		if (bungeeCommandArgs.getBungeeAccount().hasGroupPermission(Group.MODPLUS)) {
+
+			ProxiedPlayer proxiedTarget = BungeeCord.getInstance().getPlayer(args[0]);
+			sender.sendMessage("§fO jogador §a" + proxiedTarget.getName() + " §ffoi enviado ao servidor §2lobby§f!");
+			proxiedTarget.connect(BungeeCord.getInstance().getServerInfo("lobby"));
+
+		}
+
+	}
+
+	@Command(name = "connect", aliases = { "server", "go" })
+	public void connect(BungeeCommandArgs bungeeCommandArgs) {
+		CommandSender sender = bungeeCommandArgs.getSender();
+		String[] args = bungeeCommandArgs.getArgs();
+
+		if (!bungeeCommandArgs.isPlayer()) {
+			sender.sendMessage("Comando disponível apenas in-game!");
+			return;
+		}
+
 		if (args.length == 0) {
 			sender.sendMessage("§eVocê deve utilizar §a/connect (servidor)");
 			return;
@@ -162,10 +190,9 @@ public class BungeeCommand implements CommandClass {
 			sender.sendMessage("§cServidor inacessível!");
 			return;
 		}
-		
+
 		bungeeCommandArgs.getPlayer().connect(BungeeCord.getInstance().getServerInfo(server.getName()));
 		sender.sendMessage("§aVocê está sendo §2conectado§a ao servidor §e" + server.getName() + "§f!");
-
 	}
 
 }

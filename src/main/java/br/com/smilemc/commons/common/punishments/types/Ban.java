@@ -17,7 +17,6 @@ public class Ban extends Punishment {
 
 	@Override
 	public void punish(String author, String reason, long time) {
-		// TODO Auto-generated method stub
 		try {
 
 			PreparedStatement preparedStatement = Common.getBackendManager().getSqlManager()

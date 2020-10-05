@@ -15,9 +15,10 @@ public class ReportGUI {
 	Inventory inventory;
 
 	public ReportGUI(int page) {
-
 		inventory = Bukkit.createInventory(null, 5 * 9, "§7Reports");
+		
 		int inList = 0;
+		
 		if (page == 1) {
 			int max = (4 * 9) - 1;
 			for (Report report : Common.getReportManager().getReportList()) {
@@ -57,6 +58,7 @@ public class ReportGUI {
 				inventory.setItem(44, new ItemBuilder().type(Material.ARROW).name("§aPágina " + (page + 1)).build());
 			}
 		}
+		
 	}
 
 }
