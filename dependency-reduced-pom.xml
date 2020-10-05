@@ -112,7 +112,7 @@
       <artifactId>spigot-api</artifactId>
       <version>1.8.8-R0.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\shock\git\HypeMC\Common/src/main/resources/dependencies/spigot.jar</systemPath>
+      <systemPath>C:\Users\shock\Documents\Smile\Common/src/main/resources/dependencies/spigot.jar</systemPath>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -120,7 +120,7 @@
       <artifactId>bungeecord-api</artifactId>
       <version>1.8-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>C:\Users\shock\git\HypeMC\Common/src/main/resources/dependencies/bungee.jar</systemPath>
+      <systemPath>C:\Users\shock\Documents\Smile\Common/src/main/resources/dependencies/bungee.jar</systemPath>
       <optional>true</optional>
     </dependency>
   </dependencies>
