@@ -2,7 +2,6 @@ package br.com.smilemc.commons.common.account.permissions;
 
 import br.com.smilemc.commons.common.account.permissions.group.AdminPermissions;
 import br.com.smilemc.commons.common.account.permissions.group.Permission;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

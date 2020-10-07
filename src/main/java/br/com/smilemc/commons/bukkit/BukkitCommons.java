@@ -41,6 +41,10 @@ public class BukkitCommons extends JavaPlugin {
 
 	public void loadServers() {
 		Jedis jedis = Common.getBackendManager().getRedisManager().getJedisPool().getResource();
+		
+		if (!jedis.exists(Common.SERVERS) )
+			return;
+		
 		for (String serverName : jedis.get(Common.SERVERS).split(";"))
 			Common.getServerManager().newServer(new Server(serverName, 200));
 		jedis.close();
@@ -66,10 +70,10 @@ public class BukkitCommons extends JavaPlugin {
 		loadServers();
 
 		new CommandLoader(new BukkitCommandFramework(this))
-				.loadCommandsFromPackage("br.com.hypemc.commons.bukkit.command.register");
+				.loadCommandsFromPackage("br.com.smilemc.commons.bukkit.command.register");
 
 		for (Class<?> listener : ClassGetter.getClassesForPackage(this.getClass(),
-				"br.com.hypemc.commons.bukkit.listener")) {
+				"br.com.smilemc.commons.bukkit.listener")) {
 			if (Listener.class.isAssignableFrom(listener)) {
 				try {
 					Bukkit.getPluginManager().registerEvents((Listener) listener.newInstance(), this);

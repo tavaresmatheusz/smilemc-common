@@ -26,7 +26,7 @@ public class Common {
 	@Getter
 	private static final BackendManager backendManager = new BackendManager();
 	@Getter
-	private static final Sql defaultSql = new Sql("localhost", "hypemc", "root", "", 3306);
+	private static final Sql defaultSql = new Sql("190.115.198.2", "collection_1IUnp0", "golf-TQGqc0^55(", "8SYGsi*(1u)f1", 3306);
 	@Getter
 	private static final Redis defaultRedis = new Redis("localhost", 6379);
 

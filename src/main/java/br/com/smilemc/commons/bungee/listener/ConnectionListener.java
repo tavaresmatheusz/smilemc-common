@@ -123,7 +123,7 @@ public class ConnectionListener implements Listener {
 
 		ServerPing serverPing = event.getResponse();
 		serverPing
-				.setDescription("&7&m--&5&m]&6&m--&e&m--&f &6&lHYPE &dServidores de Minecraft &e&m--&6&m--&5&m[&7&m--&f"
+				.setDescription("&7&m--&5&m]&6&m--&e&m--&f &6&lSMILE &dServidores de Minecraft &e&m--&6&m--&5&m[&7&m--&f"
 						.replace("&", "§") + "\n§f" + StringCenter.centered("§fServidor de §4§lTESTES"));
 		serverPing.getPlayers().setMax(2020);
 

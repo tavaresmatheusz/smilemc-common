@@ -76,7 +76,7 @@ public class BungeeCommons extends Plugin {
 
 		try {
 			Common.log(new CommandLoader(new BungeeCommandFramework(this)).loadCommandsFromPackage(
-					"br.com.hypemc.commons.bungee.command.register") + " comandos carregados!");
+					"br.com.smilemc.commons.bungee.command.register") + " comandos carregados!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
