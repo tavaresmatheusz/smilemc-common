@@ -2,10 +2,12 @@ package br.com.smilemc.commons.bukkit.command.register;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import br.com.smilemc.commons.bukkit.BukkitCommons;
+import br.com.smilemc.commons.bukkit.account.BukkitAccount;
 import br.com.smilemc.commons.bukkit.api.actionbar.ActionBarAPI;
 import br.com.smilemc.commons.bukkit.api.chat.ChatAPI;
 import br.com.smilemc.commons.bukkit.api.chat.ChatAPI.ChatState;
@@ -13,8 +15,8 @@ import br.com.smilemc.commons.bukkit.command.BukkitCommandArgs;
 import br.com.smilemc.commons.bukkit.inventory.gui.ReportGUI;
 import br.com.smilemc.commons.common.account.permissions.Group;
 import br.com.smilemc.commons.common.command.CommandClass;
-import br.com.smilemc.commons.common.command.CommandSender;
 import br.com.smilemc.commons.common.command.CommandFramework.Command;
+import br.com.smilemc.commons.common.command.CommandSender;
 
 public class ModeratorCommand implements CommandClass {
 
@@ -83,6 +85,77 @@ public class ModeratorCommand implements CommandClass {
 				"§7§o[" + player.getName() + " alterou seu modo de jogo para " + gameMode.toString() + "]",
 				Group.TRIAL);
 
+	}
+
+	@Command(name = "build", aliases = { "b" }, groupToUse = Group.MOD)
+	public void build(BukkitCommandArgs cmdArgs) {
+
+		CommandSender sender = cmdArgs.getSender();
+		cmdArgs.getBukkitAccount().setBuildingMode(!cmdArgs.getBukkitAccount().isBuildingMode());
+		sender.sendMessage("§eVocê " + (!cmdArgs.getBukkitAccount().isBuildingMode() ? "§cdesabilitou" : "§ahabilitou")
+				+ " §eo build!");
+	}
+
+	@Command(name = "teleport")
+	public void teleport(BukkitCommandArgs cmdArgs) {
+		if (!cmdArgs.isPlayer()) {
+			cmdArgs.getSender().sendMessage("Comando disponível apenas in-game!");
+			return;
+		}
+
+		BukkitAccount player = cmdArgs.getBukkitAccount();
+		String[] args = cmdArgs.getArgs();
+
+		if (args.length == 0) {
+			player.sendMessage(" §e* §fVocê deve usar: §e/tp <alvo>");
+			return;
+		}
+
+		if (args.length == 1) {
+			Player targetPlayer = Bukkit.getPlayer(args[0]);
+			if (targetPlayer == null) {
+				player.sendMessage("§cEsse jogador não está on-line!");
+				return;
+			}
+
+			((Player) cmdArgs.getSender()).teleport(targetPlayer);
+			player.sendMessage("§aVocê foi teleportado até o  jogador §e" + targetPlayer.getName() + "§a!");
+
+			return;
+		}
+
+		if (args.length == 2) {
+			Player targetPlayer1 = Bukkit.getPlayer(args[0]);
+			Player targetPlayer2 = Bukkit.getPlayer(args[1]);
+			if (targetPlayer1 == null || targetPlayer2 == null) {
+				player.sendMessage("§cUm jogador especificado não está on-line!");
+				return;
+			}
+
+			targetPlayer1.teleport(targetPlayer2);
+			player.sendMessage("§aVocê teleportou o jogador §e" + targetPlayer1.getName() + " §aaté o  jogador §e"
+					+ targetPlayer2.getName() + "§a!");
+
+			return;
+		}
+
+		if (args.length == 3) {
+
+			Location location;
+
+			try {
+				location = new Location(((Player) cmdArgs.getSender()).getWorld(), Integer.valueOf(args[0]),
+						Integer.valueOf(args[1]), Integer.valueOf(args[2]));
+			} catch (Exception e) {
+				player.sendMessage("§cA localização especificada está incorreta!");
+				return;
+			}
+
+			((Player) cmdArgs.getSender()).teleport(location);
+			player.sendMessage("§aVocê foi teleportado até §eX:" + location.getX() + ", Y:" + location.getY() + ", Z: "
+					+ location.getZ());
+			return;
+		}
 	}
 
 	@Command(name = "chat", aliases = { "cc" }, groupToUse = Group.TRIAL)

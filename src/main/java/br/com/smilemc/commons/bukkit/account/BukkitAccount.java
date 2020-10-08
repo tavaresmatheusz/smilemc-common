@@ -2,6 +2,7 @@ package br.com.smilemc.commons.bukkit.account;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -34,6 +35,8 @@ public class BukkitAccount extends Account {
 	private AdminMode adminMode;
 	private PermissionAttachment permissionAttachment;
 	@Setter
+	private boolean isBuildingMode = false;
+	@Setter
 	private boolean usingFake = false;
 	@Setter
 	private String fakeName = "";
@@ -44,6 +47,9 @@ public class BukkitAccount extends Account {
 	public BukkitAccount(PlayerAccount playerAccount) {
 		super(playerAccount);
 
+	}
+	public void sendMessage(String msg) {
+		Bukkit.getPlayer(uuid).sendMessage(msg);
 	}
 
 	public String getRealName() {
