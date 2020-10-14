@@ -10,6 +10,7 @@ import br.com.smilemc.commons.bukkit.command.BukkitCommandArgs;
 import br.com.smilemc.commons.common.Common;
 import br.com.smilemc.commons.common.account.Account;
 import br.com.smilemc.commons.common.account.permissions.Group;
+import br.com.smilemc.commons.common.account.scoreboard.Tag;
 import br.com.smilemc.commons.common.backend.sql.SqlManager.ObjectsTypes;
 import br.com.smilemc.commons.common.command.CommandClass;
 import br.com.smilemc.commons.common.command.CommandSender;
@@ -48,6 +49,20 @@ public class AccountCommand implements CommandClass {
 				return;
 			}
 
+		if (args[1].equalsIgnoreCase("info")) {
+			
+			
+			sender.sendMessage("§e§lINFORMAÇÕES SOBRE A CONTA DE " + account.getName());
+			sender.sendMessage("§f");
+			sender.sendMessage("§fGrupo: " + Tag.getTagByGroup(account.getGroup()).getName());
+			sender.sendMessage("§fExpira em: " + StringDateUtils.formatDifference(account.getGroupExpireIn()));
+			sender.sendMessage("§f");
+			sender.sendMessage("§fCoins: " + account.getCoins());
+			sender.sendMessage("§fXP: " + account.getXp());
+			sender.sendMessage("§f");
+			return;
+			
+		}
 		if (args[1].equalsIgnoreCase("group")) {
 
 			if (args.length < 4) {

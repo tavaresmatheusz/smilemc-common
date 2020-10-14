@@ -39,6 +39,33 @@ public class BungeeCommand implements CommandClass {
 				+ "/" + beastServer.getMaxPlayers());
 	}
 
+	@Command(name = "info", groupToUse = Group.ADMIN)
+	public void info(BungeeCommandArgs bungeeCommandArgs) {
+
+		CommandSender sender = bungeeCommandArgs.getSender();
+		
+		long premiumsPlayers = BungeeCommons.getInstance().getConnectionManager().getConnections().stream()
+				.filter(connection -> connection.isPremium()).count();
+		long crackedPlayers = BungeeCommons.getInstance().getConnectionManager().getConnections().stream()
+				.filter(connection -> !connection.isPremium()).count();
+
+		long protocol47 = BungeeCommons.getInstance().getConnectionManager().getConnections().stream()
+				.filter(connection -> connection.getProtocol() >= 47).count();
+		long protocol5 = BungeeCommons.getInstance().getConnectionManager().getConnections().stream()
+				.filter(connection -> connection.getProtocol() < 47).count();
+		
+		sender.sendMessage("§e§lINFORMAÇÕES SOBRE AS CONEXÕES RECENTES: ");
+		sender.sendMessage("");
+		sender.sendMessage("§fConexões originais: " + premiumsPlayers);
+		sender.sendMessage("§fConexões piratas: " + crackedPlayers);
+		sender.sendMessage("");
+		sender.sendMessage("§fConexões na versão 1.8 ou superior: " + protocol47);
+		sender.sendMessage("§fConexões na versão 1.7: " + protocol5);
+		sender.sendMessage("");
+
+		
+	}
+
 	@Command(name = "send", groupToUse = Group.MOD)
 	public void send(BungeeCommandArgs bungeeCommandArgs) {
 		String[] args = bungeeCommandArgs.getArgs();

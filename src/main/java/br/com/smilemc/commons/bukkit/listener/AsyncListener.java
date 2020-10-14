@@ -26,10 +26,10 @@ public class AsyncListener implements Listener {
 		if (ChatAPI.getInstance().getChatState() == ChatState.ENABLED) {
 
 			League league = bukkitAccount.getLeague() == null ? League.UNRANKED : bukkitAccount.getLeague();
-			String suffix = (" ") + "§7[" + league.getColor() + league.getSymbol() + "§7]"
+			String suffix = "§7[" + league.getColor() + league.getSymbol() + "§7]"
 					+ (bukkitAccount.getMedal() == null ? ""
 							: " " + bukkitAccount.getMedal().getColor() + bukkitAccount.getMedal().getSymbol());
-			Bukkit.broadcastMessage(bukkitAccount.getTag().getPrefix() + player.getName() + suffix + " §a§l> §f"
+			Bukkit.broadcastMessage(suffix + " " + bukkitAccount.getTag().getPrefix() + player.getName() + " §a§l> §f"
 					+ (bukkitAccount.hasGroupPermission(Group.PRO) ? event.getMessage().replace("&", "§")
 							: event.getMessage()));
 		} else {

@@ -3,15 +3,15 @@ package br.com.smilemc.commons.bungee.listener;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import br.com.smilemc.commons.SmileMC;
 import br.com.smilemc.commons.bungee.BungeeCommons;
+import br.com.smilemc.commons.bungee.ab.connection.Connection;
 import br.com.smilemc.commons.bungee.account.BungeeAccount;
 import br.com.smilemc.commons.bungee.api.server.ServerAPI;
 import br.com.smilemc.commons.common.Common;
 import br.com.smilemc.commons.common.server.Server;
 import br.com.smilemc.commons.common.util.string.StringCenter;
 import net.md_5.bungee.api.ServerPing;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -27,33 +27,53 @@ public class ConnectionListener implements Listener {
 
 	@EventHandler
 	public void onPreLogin(PreLoginEvent event) {
+		/*
+		 * Isso ta meio torto mas nao eh tao problema assim nao
+		 */
 
-		if (Common.getUuidFetcher().getUUID(event.getConnection().getName()) == null) {
-			event.getConnection().setOnlineMode(false);
-		} else {
-			event.getConnection().setOnlineMode(true);
-			Jedis jedis = Common.getBackendManager().getRedisManager().getJedisPool().getResource();
-			jedis.set(Common.TARGET_SERVER_FIELD + event.getConnection().getName(), "lobby");
-			jedis.close();
-		}
+		PendingConnection pendingConnection = event.getConnection();
+		Connection connection = new Connection(pendingConnection.getAddress().getHostName());
+		connection.setProtocol(pendingConnection.getVersion());
+		
+		BungeeCommons.getInstance().getProxy().getScheduler().runAsync(BungeeCommons.getInstance(), new Runnable() {
+			public void run() {
+				if (Common.getUuidFetcher().getUUID(event.getConnection().getName()) == null) {
+					event.getConnection().setOnlineMode(false);
+					connection.setPremium(false);
+				} else {
+					event.getConnection().setOnlineMode(true);
+					Jedis jedis = Common.getBackendManager().getRedisManager().getJedisPool().getResource();
+					jedis.set(Common.TARGET_SERVER_FIELD + event.getConnection().getName(), "lobby");
+					jedis.close();
+					connection.setPremium(true);
+				}
+				BungeeCommons.getInstance().getConnectionManager().addConnection(connection);
+			}
+		});
 
 	}
 
 	@EventHandler
 	public void onLogin(LoginEvent event) {
 		Common.debug(event.getConnection().getAddress().getHostName());
-		if (!Common.isAllowedCountry(Common.getLocationManager()
-				.getLocation(event.getConnection().getAddress().getHostName()).getCountry_code())) {
-			event.setCancelled(true);
-			event.setCancelReason(TextComponent.fromLegacyText(SmileMC.PREFIX
-					+ "\n§fO Seu país está bloqueado, caso esteja utilizando VPN/PROXY\nconsidere desativar e tentar novamente\n§f\n"
-					+ SmileMC.SITE));
 
-			Jedis jedis = Common.getBackendManager().getRedisManager().getJedisPool().getResource();
-			jedis.expire(Common.TARGET_SERVER_FIELD + event.getConnection().getName(), 1);
-			jedis.close();
-			return;
-		}
+		/*
+		 * Isso com toda certeza do mundo vai travar o desempenho, arruma isso eu mesmo
+		 * por favor!
+		 */
+
+//		if (!Common.isAllowedCountry(Common.getLocationManager()
+//				.getLocation(event.getConnection().getAddress().getHostName()).getCountry_code())) {
+//			event.setCancelled(true);
+//			event.setCancelReason(TextComponent.fromLegacyText(SmileMC.PREFIX
+//					+ "\n§fO Seu país está bloqueado, caso esteja utilizando VPN/PROXY\nconsidere desativar e tentar novamente\n§f\n"
+//					+ SmileMC.SITE));
+//
+//			Jedis jedis = Common.getBackendManager().getRedisManager().getJedisPool().getResource();
+//			jedis.expire(Common.TARGET_SERVER_FIELD + event.getConnection().getName(), 1);
+//			jedis.close();
+//			return;
+//		}
 
 		Common.getAccountManager().registerAccount(event.getConnection().getUniqueId(),
 				new BungeeAccount(event.getConnection().getName()));
@@ -122,9 +142,9 @@ public class ConnectionListener implements Listener {
 	public void onProxyPing(ProxyPingEvent event) {
 
 		ServerPing serverPing = event.getResponse();
-		serverPing
-				.setDescription("&7&m--&5&m]&6&m--&e&m--&f &6&lSMILE &dServidores de Minecraft &e&m--&6&m--&5&m[&7&m--&f"
-						.replace("&", "§") + "\n§f" + StringCenter.centered("§fServidor de §4§lTESTES"));
+		serverPing.setDescription(
+				"&7&m--&5&m]&6&m--&e&m--&f &6&lSMILE &dServidores de Minecraft &e&m--&6&m--&5&m[&7&m--&f".replace("&",
+						"§") + "\n§f" + StringCenter.centered("§fServidor de §4§lTESTES"));
 		serverPing.getPlayers().setMax(2020);
 
 		event.setResponse(serverPing);

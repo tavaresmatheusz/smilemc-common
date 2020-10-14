@@ -80,7 +80,7 @@ public class ModeratorCommand implements CommandClass {
 		}
 
 		player.setGameMode(gameMode);
-		player.sendMessage("§aVocê alterou seu modo de jogo para §e" + gameMode.toString() + "§a!");
+		sender.sendMessage("§aVocê alterou seu modo de jogo para §e" + gameMode.toString() + "§a!");
 		bukkitCommandArgs.broadcast(
 				"§7§o[" + player.getName() + " alterou seu modo de jogo para " + gameMode.toString() + "]",
 				Group.TRIAL);
@@ -102,24 +102,23 @@ public class ModeratorCommand implements CommandClass {
 			cmdArgs.getSender().sendMessage("Comando disponível apenas in-game!");
 			return;
 		}
-
-		BukkitAccount player = cmdArgs.getBukkitAccount();
+		CommandSender sender = cmdArgs.getSender();
 		String[] args = cmdArgs.getArgs();
 
 		if (args.length == 0) {
-			player.sendMessage(" §e* §fVocê deve usar: §e/tp <alvo>");
+			sender.sendMessage(" §e* §fVocê deve usar: §e/tp <alvo>");
 			return;
 		}
 
 		if (args.length == 1) {
 			Player targetPlayer = Bukkit.getPlayer(args[0]);
 			if (targetPlayer == null) {
-				player.sendMessage("§cEsse jogador não está on-line!");
+				sender.sendMessage("§cEsse jogador não está on-line!");
 				return;
 			}
 
 			((Player) cmdArgs.getSender()).teleport(targetPlayer);
-			player.sendMessage("§aVocê foi teleportado até o  jogador §e" + targetPlayer.getName() + "§a!");
+			sender.sendMessage("§aVocê foi teleportado até o  jogador §e" + targetPlayer.getName() + "§a!");
 
 			return;
 		}
@@ -128,12 +127,12 @@ public class ModeratorCommand implements CommandClass {
 			Player targetPlayer1 = Bukkit.getPlayer(args[0]);
 			Player targetPlayer2 = Bukkit.getPlayer(args[1]);
 			if (targetPlayer1 == null || targetPlayer2 == null) {
-				player.sendMessage("§cUm jogador especificado não está on-line!");
+				sender.sendMessage("§cUm jogador especificado não está on-line!");
 				return;
 			}
 
 			targetPlayer1.teleport(targetPlayer2);
-			player.sendMessage("§aVocê teleportou o jogador §e" + targetPlayer1.getName() + " §aaté o  jogador §e"
+			sender.sendMessage("§aVocê teleportou o jogador §e" + targetPlayer1.getName() + " §aaté o  jogador §e"
 					+ targetPlayer2.getName() + "§a!");
 
 			return;
@@ -147,30 +146,31 @@ public class ModeratorCommand implements CommandClass {
 				location = new Location(((Player) cmdArgs.getSender()).getWorld(), Integer.valueOf(args[0]),
 						Integer.valueOf(args[1]), Integer.valueOf(args[2]));
 			} catch (Exception e) {
-				player.sendMessage("§cA localização especificada está incorreta!");
+				sender.sendMessage("§cA localização especificada está incorreta!");
 				return;
 			}
 
 			((Player) cmdArgs.getSender()).teleport(location);
-			player.sendMessage("§aVocê foi teleportado até §eX:" + location.getX() + ", Y:" + location.getY() + ", Z: "
+			sender.sendMessage("§aVocê foi teleportado até §eX:" + location.getX() + ", Y:" + location.getY() + ", Z: "
 					+ location.getZ());
 			return;
 		}
 	}
 
-	@Command(name = "chat", aliases = { "cc" }, groupToUse = Group.TRIAL)
+	@Command(name = "cc", groupToUse = Group.TRIAL)
+	public void ccCommand(BukkitCommandArgs cmdArgs) {
+		
+		for (int i = 0; i < 100; i++)
+			cmdArgs.broadcast("", Group.MEMBRO);
+
+
+	}
+
+	@Command(name = "chat", groupToUse = Group.TRIAL)
 	public void chat(BukkitCommandArgs cmdArgs) {
 
-		String[] args = cmdArgs.getArgs();
 		CommandSender sender = cmdArgs.getSender();
-		String label = cmdArgs.getLabel();
-		if (label.equalsIgnoreCase("cc") || (args[0] != null && args[0].equalsIgnoreCase("clear"))) {
-			for (int i = 0; i < 100; i++)
-				cmdArgs.broadcast("", Group.MEMBRO);
 
-			cmdArgs.broadcast("§7§o[" + sender.getName() + " limpou o chat]", Group.TRIAL);
-			return;
-		}
 		sender.sendMessage("§eVocê "
 				+ (ChatAPI.getInstance().getChatState() == ChatState.ENABLED ? "§cdesabilitou" : "§ahabilitou")
 				+ " §eo chat!");
@@ -194,8 +194,8 @@ public class ModeratorCommand implements CommandClass {
 		cmdArgs.getBukkitAccount().getAdminMode().changeMode();
 
 		if (cmdArgs.getBukkitAccount().getAdminMode().isInMode()) {
-			player.sendMessage("§dVocê entrou no modo ADMIN");
-			player.sendMessage("§dVocê está invisível para jogadores abaixo do cargo " + Group
+			sender.sendMessage("§dVocê entrou no modo ADMIN");
+			sender.sendMessage("§dVocê está invisível para jogadores abaixo do cargo " + Group
 					.getGroupByOrdinal(cmdArgs.getBukkitAccount().getGroup().ordinal() - 1).getName().toUpperCase()
 					+ "!");
 
@@ -213,8 +213,8 @@ public class ModeratorCommand implements CommandClass {
 			}.runTaskTimer(BukkitCommons.getInstance(), 0, 20l);
 
 		} else {
-			player.sendMessage("§dVocê saiu do modo ADMIN");
-			player.sendMessage("§dVocê está visível para todos jogadores!");
+			sender.sendMessage("§dVocê saiu do modo ADMIN");
+			sender.sendMessage("§dVocê está visível para todos jogadores!");
 		}
 		cmdArgs.broadcast("§7§o[" + player.getName() + " "
 				+ (cmdArgs.getBukkitAccount().getAdminMode().isInMode() ? "entrou no" : "saiu do") + " modo admin]",

@@ -94,6 +94,11 @@ public class FakeCommand implements CommandClass {
 			return;
 		}
 
+		if (args[0].length() < 4) {
+			sender.sendMessage("§cEscolha um fake maior!");
+			return;
+		}
+		
 		String fakeName = args[0];
 
 		if (Common.validateName(fakeName) == false || Common.getUuid(fakeName) != null) {

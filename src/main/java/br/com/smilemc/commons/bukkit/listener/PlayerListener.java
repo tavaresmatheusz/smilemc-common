@@ -6,14 +6,18 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import br.com.smilemc.commons.bukkit.account.BukkitAccount;
+import br.com.smilemc.commons.bukkit.api.player.AdminMode;
 import br.com.smilemc.commons.bukkit.api.player.FakePlayerAPI;
 import br.com.smilemc.commons.bukkit.api.player.TagAPI;
 import br.com.smilemc.commons.bukkit.events.tag.PlayerChangeTag;
@@ -37,8 +41,7 @@ public class PlayerListener implements Listener {
 		bukkitAccount.permissionSetup(player);
 
 		player.teleport(player.getWorld().getSpawnLocation());
-
-		Bukkit.getPluginManager().callEvent(new PlayerChangeTag(player, Tag.getTagByGroup(bukkitAccount.getGroup())));
+		player.chat("/tag " + Tag.getTagByGroup(bukkitAccount.getGroup()));
 
 		Bukkit.getOnlinePlayers().forEach(players -> {
 			BukkitAccount bAcc = (BukkitAccount) Common.getAccountManager().getAccount(players.getUniqueId());
@@ -60,6 +63,24 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
+	public void build(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+
+		BukkitAccount bukkitAccount = (BukkitAccount) Common.getAccountManager().getAccount(player.getUniqueId());
+		if (!bukkitAccount.isBuildingMode())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void build(BlockPlaceEvent event) {
+		Player player = event.getPlayer();
+
+		BukkitAccount bukkitAccount = (BukkitAccount) Common.getAccountManager().getAccount(player.getUniqueId());
+		if (!bukkitAccount.isBuildingMode())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 
 		event.setQuitMessage(null);
@@ -68,6 +89,16 @@ public class PlayerListener implements Listener {
 
 		Common.getAccountManager().unregisterAccount(player.getUniqueId());
 
+	}
+
+	@EventHandler
+	public void onClick(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+
+		BukkitAccount bukkitAccount = (BukkitAccount) Common.getAccountManager().getAccount(player.getUniqueId());
+		if (bukkitAccount.getAdminMode().isInMode() || player.getItemInHand().getType() == Material.CHEST) 
+			player.openInventory(new ReportGUI(1).getInventory());
+			
 	}
 
 	@EventHandler

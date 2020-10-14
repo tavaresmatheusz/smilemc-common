@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import br.com.smilemc.commons.bungee.ab.AntiBot;
+import br.com.smilemc.commons.bungee.ab.connection.controller.ConnectionManager;
 import br.com.smilemc.commons.bungee.command.BungeeCommandFramework;
 import br.com.smilemc.commons.bungee.listener.ChatListener;
 import br.com.smilemc.commons.bungee.listener.ConnectionListener;
@@ -31,6 +32,8 @@ public class BungeeCommons extends Plugin {
 	private ServerManager serverManager;
 	@Getter
 	private AntiBot antiBot;
+	@Getter
+	private ConnectionManager connectionManager;
 
 	public int loadServers() {
 		List<String> servers = new ArrayList<String>();
@@ -60,6 +63,7 @@ public class BungeeCommons extends Plugin {
 
 		instance = this;
 		serverManager = Common.getServerManager();
+		connectionManager = new ConnectionManager();
 		Common.setInstanceType(InstanceType.BUNGEE);
 		Common.log("Iniciando conexão com o backend!");
 
